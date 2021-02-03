@@ -1,5 +1,9 @@
+from typing import Dict
 
-class Summary(object):
+from interfaces import Serializable
+
+
+class Summary(Serializable):
     gigabytes: int
     minutes: int
     sms: int
@@ -12,8 +16,8 @@ class Summary(object):
     def __repr__(self):
         return f'{self.__class__.__name__}(gigabytes={self.gigabytes}, minutes={self.minutes}, sms={self.sms})'
 
-    def __ne__(self, other: 'Summary'):
-        return self.minutes != other.minutes and self.gigabytes != other.gigabytes and self.sms != other.sms
+    def __ne__(self, summary: 'Summary'):
+        return self.minutes != summary.minutes and self.gigabytes != summary.gigabytes and self.sms != summary.sms
 
     def increment(self, summary: 'Summary'):
         self.gigabytes += summary.gigabytes
@@ -38,3 +42,20 @@ class Summary(object):
 
     def increment_sms(self, sms: int):
         self.sms += int(sms)
+
+    def load_from_dict(self, data: Dict) -> bool:
+        keys = {'gigabytes', 'minutes', 'sms'}
+        if not keys.issubset(data.keys()):
+            return False
+
+        self.gigabytes = int(data['gigabytes'])
+        self.minutes = int(data['minutes'])
+        self.sms = int(data['sms'])
+        return True
+
+    def to_dict(self) -> Dict:
+        return {
+            'gigabytes': self.gigabytes,
+            'minutes': self.minutes,
+            'sms': self.sms
+        }

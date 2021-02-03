@@ -13,4 +13,6 @@ class SoldRestsChangedResponse(CommandResponse):
         self._summary = summary
 
     def to_dict(self) -> Dict:
-        pass
+        data = super().to_dict()
+        data['summary'] = self._summary.to_dict()
+        return data

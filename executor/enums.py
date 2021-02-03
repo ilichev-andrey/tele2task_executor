@@ -7,7 +7,7 @@ class CommandType(Enum):
 
 
 class CommandStatus(Enum):
-    COMMAND_RECEIVED_SUCCESSFULLY = 0
+    RECEIVED_SUCCESSFULLY = 0
     SOLD_RESTS_CHANGED = 20
     COMPLETED_EXECUTION = 40
     INTERNAL_ERROR = 60

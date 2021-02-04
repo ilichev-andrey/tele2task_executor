@@ -20,11 +20,10 @@ class TestSellingLotsResponse(unittest.TestCase):
             }
         }
 
-        response = SellingLotsResponse(
-            command_id='command_id',
-            status=CommandStatus.RECEIVED_SUCCESSFULLY,
-            summary=Summary(gigabytes=3, minutes=2, sms=1)
-        )
+        response = SellingLotsResponse()
+        response.id = 'command_id'
+        response.status = CommandStatus.RECEIVED_SUCCESSFULLY
+        response.summary = Summary(gigabytes=3, minutes=2, sms=1)
         self.assertEqual(expected, response.to_dict())
 
 

@@ -8,7 +8,7 @@ from enums import CommandType
 
 class CommandForTest(Command):
     def get_type(self) -> CommandType:
-        return CommandType.ABORT_SELLING_ALL_LOTS
+        return CommandType.UNKNOWN
 
 
 def provider_load_from_dict():

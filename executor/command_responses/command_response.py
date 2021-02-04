@@ -1,22 +1,33 @@
 from typing import Dict
 
 from enums import CommandStatus
-from interfaces import ConvertibleToDict
+from interfaces import Serializable
 
 
-class CommandResponse(ConvertibleToDict):
-    _id = str
-    _status: CommandStatus
+class CommandResponse(Serializable):
+    id = str
+    status: CommandStatus
 
-    def __init__(self, command_id: str, status: CommandStatus):
-        self._id = command_id
-        self._status = status
+    def __init__(self):
+        self.id = ''
+        self.status = CommandStatus.UNKNOWN
+
+    def load_from_dict(self, data: Dict) -> bool:
+        if not super()._has_keys_in_dict(data, ('id', 'status')):
+            return False
+
+        if not super()._has_keys_in_dict(data['status'], ('code',)):
+            return False
+
+        self.id = str(data['id'])
+        self.status = CommandStatus(data['status']['code'])
+        return True
 
     def to_dict(self) -> Dict:
         return {
-            'id': self._id,
+            'id': self.id,
             'status': {
-                'code': self._status.value,
-                'message': self._status.name
+                'code': self.status.value,
+                'message': self.status.name
             }
         }

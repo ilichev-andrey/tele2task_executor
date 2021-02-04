@@ -16,7 +16,7 @@ class SummaryResponse(CommandResponse):
             return False
 
         summary = Summary()
-        if not summary.load_from_dict(data):
+        if not summary.load_from_dict(data['summary']):
             return False
 
         if not super().load_from_dict(data):

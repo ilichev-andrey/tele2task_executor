@@ -1,9 +1,7 @@
 from typing import Dict
 
-from tele2client.containers import AccessToken
-
 from commands.command import Command
-from containers import Summary
+from containers import Summary, AccessToken
 from enums import CommandType
 
 
@@ -20,4 +18,26 @@ class SellingLotsCommand(Command):
         return CommandType.SELLING_LOTS
 
     def load_from_dict(self, data: Dict) -> bool:
-        return False
+        if not super()._has_keys_in_dict(data, ('access_token', 'summary')):
+            return False
+
+        access_token = AccessToken()
+        if not access_token.load_from_dict(data['access_token']):
+            return False
+
+        summary = Summary()
+        if not summary.load_from_dict(data['summary']):
+            return False
+
+        if not super().load_from_dict(data):
+            return False
+
+        self.access_token = access_token
+        self.summary = summary
+        return True
+
+    def to_dict(self) -> Dict:
+        data = super().to_dict()
+        data['access_token'] = self.access_token.to_dict()
+        data['summary'] = self.summary.to_dict()
+        return data

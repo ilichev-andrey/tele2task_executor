@@ -1,11 +1,11 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict
 
 from enums import CommandType
-from interfaces import LoadableFromDict
+from interfaces import Serializable
 
 
-class Command(LoadableFromDict, ABC):
+class Command(Serializable):
     id = str
 
     def __init__(self):
@@ -16,4 +16,11 @@ class Command(LoadableFromDict, ABC):
         pass
 
     def load_from_dict(self, data: Dict) -> bool:
-        pass
+        if not super()._has_keys_in_dict(data, ('id',)):
+            return False
+
+        self.id = str(data['id'])
+        return True
+
+    def to_dict(self) -> Dict:
+        return {'id': self.id}

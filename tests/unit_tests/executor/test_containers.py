@@ -1,11 +1,12 @@
 import unittest
+from datetime import datetime
 
 from ddt import ddt, idata
 
-from executor.containers import *
+from containers import AccessToken, Summary
 
 
-def provider_load_from_dict():
+def summary_provider_load_from_dict():
     default = Summary()
     failed_result = {
         'func_result': False,
@@ -47,7 +48,7 @@ def provider_load_from_dict():
 
 @ddt
 class TestSummary(unittest.TestCase):
-    @idata(provider_load_from_dict())
+    @idata(summary_provider_load_from_dict())
     def test_load_from_dict(self, case_data):
         data, expected = case_data['data'], case_data['expected']
 
@@ -66,6 +67,69 @@ class TestSummary(unittest.TestCase):
 
         summary = Summary(gigabytes=3, minutes=2, sms=1)
         self.assertEqual(expected, summary.to_dict())
+
+
+def token_provider_load_from_dict():
+    default = AccessToken()
+    failed_result = {
+        'func_result': False,
+        'token': default.token,
+        'expired_dt': default.expired_dt
+    }
+
+    timestamp = 1612442967
+    cases = [
+        # Нет параметра token
+        {
+            'data': {'expired_dt': 1},
+            'expected': failed_result
+        },
+        # Нет параметра expired_dt
+        {
+            'data': {'token': 'token'},
+            'expected': failed_result
+        },
+        # Параметр expired_dt не является int
+        {
+            'data': {'token': 'token', 'expired_dt': '1'},
+            'expected': failed_result
+        },
+        # Успешная загрузка данных
+        {
+            'data': {'token': 'token', 'expired_dt': timestamp},
+            'expected': {
+                'func_result': True,
+                'token': 'token',
+                'expired_dt': datetime.fromtimestamp(timestamp)
+            }
+        }
+    ]
+    for case in cases:
+        yield case
+
+
+@ddt
+class TestAccessToken(unittest.TestCase):
+    @idata(token_provider_load_from_dict())
+    def test_load_from_dict(self, case_data):
+        data, expected = case_data['data'], case_data['expected']
+
+        access_token = AccessToken()
+        self.assertEqual(expected['func_result'], access_token.load_from_dict(data))
+        self.assertEqual(expected['token'], access_token.token)
+        self.assertEqual(expected['expired_dt'], access_token.expired_dt)
+
+    def test_to_dict(self):
+        timestamp = 1612442967
+        expected = {
+            'token': 'token',
+            'expired_dt': timestamp
+        }
+
+        access_token = AccessToken()
+        access_token.token = 'token'
+        access_token.expired_dt = datetime.fromtimestamp(timestamp)
+        self.assertEqual(expected, access_token.to_dict())
 
 
 if __name__ == '__main__':

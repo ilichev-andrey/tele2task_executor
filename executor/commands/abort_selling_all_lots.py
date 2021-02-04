@@ -15,4 +15,16 @@ class AbortSellingAllLotsCommand(Command):
         return CommandType.ABORT_SELLING_ALL_LOTS
 
     def load_from_dict(self, data: Dict) -> bool:
-        return False
+        if not super()._has_keys_in_dict(data, ('phone_number',)):
+            return False
+
+        if not super().load_from_dict(data):
+            return False
+
+        self.phone_number = str(data['phone_number'])
+        return True
+
+    def to_dict(self) -> Dict:
+        data = super().to_dict()
+        data['phone_number'] = self.phone_number
+        return data

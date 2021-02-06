@@ -1,5 +1,8 @@
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List, NamedTuple
+
+from tele2client.client import Tele2Client
+from tele2client.containers import LotInfo
 
 from interfaces import Serializable
 
@@ -22,6 +25,9 @@ class Summary(Serializable):
 
     def __ne__(self, other: 'Summary'):
         return not self.__ne__(other)
+
+    def __str__(self):
+        return f'Summary(gigabytes={self.gigabytes}, minutes={self.minutes}, sms={self.sms})'
 
     def increment(self, other: 'Summary'):
         self.gigabytes += other.gigabytes
@@ -75,6 +81,9 @@ class AccessToken(Serializable):
     def __eq__(self, other: 'AccessToken'):
         return self.token == other.token and self.expired_dt == other.expired_dt
 
+    def __str__(self):
+        return f'AccessToken(token={self.token}, expired_dt={str(self.expired_dt)})'
+
     def load_from_dict(self, data: Dict) -> bool:
         if not super()._has_keys_in_dict(data, ('token', 'expired_dt')):
             return False
@@ -91,3 +100,39 @@ class AccessToken(Serializable):
             'token': self.token,
             'expired_dt': int(datetime.timestamp(self.expired_dt))
         }
+
+
+# class Task(object):
+#     phone_number: str
+#     access_token: AccessToken
+#     lots: List[LotInfo]  # Список активных лотов
+#     # summary: TaskSummary
+#     # sold_summary: TaskSummary
+#
+#     def __init__(self, tele2client: Tele2Client, lots: List[LotInfo], summary: TaskSummary,
+#                  sold_summary: TaskSummary = TaskSummary()):
+#         self.tele2client = tele2client
+#         self.lots = lots
+#         self.summary = summary
+#         self.sold_summary = sold_summary
+
+class Task(NamedTuple):
+    phone_number: str
+    access_token: AccessToken
+    lots: List[LotInfo]  # Список активных лотов
+
+
+class Clients(object):
+    _tele2clients = Dict[str, Tele2Client]
+
+    def __init__(self):
+        self._tele2clients = {}
+
+    def add(self, tele2client: Tele2Client):
+        self._tele2clients[tele2client.phone_number] = tele2client
+
+    def has(self, phone_number: str) -> bool:
+        return phone_number in self._tele2clients
+
+    def get(self, phone_number: str) -> Tele2Client:
+        return self._tele2clients[phone_number]

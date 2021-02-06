@@ -11,6 +11,9 @@ class AbortSellingAllLotsCommand(Command):
         super().__init__()
         self.phone_number = ''
 
+    def __str__(self):
+        return f'AbortSellingAllLotsCommand(id={self.id}, phone_number={self.phone_number})'
+
     def get_type(self) -> CommandType:
         return CommandType.ABORT_SELLING_ALL_LOTS
 

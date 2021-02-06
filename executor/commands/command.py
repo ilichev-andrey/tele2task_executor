@@ -11,6 +11,9 @@ class Command(Serializable):
     def __init__(self):
         self.id = ''
 
+    def __str__(self):
+        return f'Command(id={self.id})'
+
     @abstractmethod
     def get_type(self) -> CommandType:
         pass

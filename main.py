@@ -1,10 +1,14 @@
 import json
+import logging
 import os
 import sys
 
+from tele2client.wrappers import logger
+
+import configs
 from application import Application
 
-CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.js')
+CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
 
 
 def main():
@@ -15,7 +19,13 @@ def main():
     with open(CONFIG_FILE) as fin:
         config = json.load(fin)
 
-    # logger.create(config['log_file'], logging.INFO)
+    try:
+        config = configs.load_config(config)
+    except KeyError:
+        sys.stderr.write(f'Parameters are missing in the file, see "default_config.json"')
+        exit(1)
+
+    logger.create(config.log_file, logging.INFO)
 
     application = Application(config)
     application.run()

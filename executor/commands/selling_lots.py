@@ -14,6 +14,9 @@ class SellingLotsCommand(Command):
         self.access_token = AccessToken()
         self.summary = Summary()
 
+    def __str__(self):
+        return f'SellingLotsCommand(id={self.id}, access_token={str(self.access_token)}, summary={str(self.summary)})'
+
     def get_type(self) -> CommandType:
         return CommandType.SELLING_LOTS
 

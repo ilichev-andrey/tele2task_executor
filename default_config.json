@@ -1,0 +1,25 @@
+{
+  "log_file": "/path/to/logs",
+  "task": {
+    "execution_interval_seconds": 30
+  },
+  "lot": {
+    "internet_life_time_minutes": 2,
+    "voice_life_time_minutes": 2,
+    "sms_life_time_minutes": 2,
+    "prices": {
+      "gigabyte": {
+        "count": 1,
+        "cost": 15
+      },
+      "minutes": {
+        "count": 50,
+        "cost": 40
+      },
+      "sms": {
+        "count": 50,
+        "cost": 25
+      }
+    }
+  }
+}

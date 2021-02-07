@@ -37,7 +37,8 @@ class Application(object):
 
     async def _handle_data(self, client: Client):
         data = await self._read_data(client)
-        self._execute_command(data)
+        LoggerWrap().get_logger().info(f'Получены данные команды: {data}')
+        await self._execute_command(data, client)
 
     @staticmethod
     async def _read_data(client: Client) -> Dict:
@@ -52,14 +53,14 @@ class Application(object):
             LoggerWrap().get_logger().exception(str(e))
             raise
 
-    def _execute_command(self, command_data: Dict):
+    async def _execute_command(self, command_data: Dict, client: Client):
         try:
             command = self._handle_command(command_data)
-            executor = executors_factory.create(command.get_type(), self._task_manager, self._lot_manager)
+            executor = executors_factory.create(command.get_type(), self._task_manager)
         except exceptions.CommandException as e:
             LoggerWrap().get_logger().exception(str(e))
         else:
-            executor.execute(command)
+            await executor.execute(command, client)
 
     @staticmethod
     def _handle_command(data: Dict) -> Command:
@@ -76,4 +77,5 @@ class Application(object):
         if not command.load_from_dict(data):
             raise exceptions.InvalidFormatCommand(f'Не удалось загрузить команду, данные: {data}')
 
+        LoggerWrap().get_logger().info(f'Команда обработана: {command}')
         return command

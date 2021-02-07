@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, NamedTuple
+from typing import Dict, List, ValuesView
 
 from tele2client.client import Tele2Client
 from tele2client.containers import LotInfo
@@ -102,24 +102,47 @@ class AccessToken(Serializable):
         }
 
 
-# class Task(object):
-#     phone_number: str
-#     access_token: AccessToken
-#     lots: List[LotInfo]  # Список активных лотов
-#     # summary: TaskSummary
-#     # sold_summary: TaskSummary
-#
-#     def __init__(self, tele2client: Tele2Client, lots: List[LotInfo], summary: TaskSummary,
-#                  sold_summary: TaskSummary = TaskSummary()):
-#         self.tele2client = tele2client
-#         self.lots = lots
-#         self.summary = summary
-#         self.sold_summary = sold_summary
-
-class Task(NamedTuple):
+class Task(object):
     phone_number: str
     access_token: AccessToken
-    lots: List[LotInfo]  # Список активных лотов
+    need_to_sell: Summary
+    active_lots: List[LotInfo]
+    sold_lots: List[LotInfo]
+
+    def __init__(self, phone_number: str, access_token: AccessToken, need_to_sell: Summary):
+        self.phone_number = phone_number
+        self.access_token = access_token
+        self.need_to_sell = need_to_sell
+        self.active_lots = []
+        self.sold_lots = []
+
+    def merge(self, other: 'Task'):
+        self.need_to_sell.increment(other.need_to_sell)
+        self.active_lots.extend(other.active_lots)
+        self.sold_lots.extend(other.sold_lots)
+
+
+class Tasks(object):
+    _tasks = Dict[str, Task]
+
+    def __init__(self):
+        self._tasks = {}
+
+    def add(self, task: Task):
+        self._tasks[task.phone_number] = task
+
+    def remove(self, phone_number: str):
+        if self.has(phone_number):
+            del self._tasks[phone_number]
+
+    def has(self, phone_number: str) -> bool:
+        return phone_number in self._tasks
+
+    def get(self, phone_number: str) -> Task:
+        return self._tasks[phone_number]
+
+    def get_all(self) -> ValuesView[Task]:
+        return self._tasks.values()
 
 
 class Clients(object):
@@ -130,6 +153,10 @@ class Clients(object):
 
     def add(self, tele2client: Tele2Client):
         self._tele2clients[tele2client.phone_number] = tele2client
+
+    def remove(self, phone_number: str):
+        if self.has(phone_number):
+            del self._tele2clients[phone_number]
 
     def has(self, phone_number: str) -> bool:
         return phone_number in self._tele2clients

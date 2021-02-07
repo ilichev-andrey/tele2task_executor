@@ -25,6 +25,7 @@ class LotManager(object):
         lots_for_create = self._controller.create_objects_by_summary(summary)
         lots = []
         for lot in lots_for_create:
+            LoggerWrap().get_logger().info(f'Пересоздание лота: {lot}')
             try:
                 lot_info = await client.create_lot(lot)
             except BaseTele2ClientException as e:
@@ -96,6 +97,7 @@ class LotManager(object):
         deleted_lots = []
         for lot in lots:
             if time_utils.is_expired(self._get_lot_deadline(lot)):
+                LoggerWrap().get_logger().info(f'Удаление не проданного лота: {lot}')
                 if await client.delete_lot(lot.id):
                     deleted_lots.append(lot)
                 else:

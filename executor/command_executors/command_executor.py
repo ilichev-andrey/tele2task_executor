@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 
 from commands.command import Command
+from net import Client
 
 
 class CommandExecutor(ABC):
     @abstractmethod
-    def execute(self, command: Command) -> bool:
+    async def execute(self, command: Command, client: Client) -> bool:
         pass

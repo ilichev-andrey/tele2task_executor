@@ -29,8 +29,9 @@ class Application(object):
     def _execute_commands(self):
         data = {}
         try:
-            command = self._handle_command(data)
-        except exceptions.InvalidFormatCommand as e:
+            command = self._handle_command(command_data)
+            executor = executors_factory.create(command.get_type(), self._task_manager, self._lot_manager)
+        except exceptions.CommandException as e:
             LoggerWrap().get_logger().exception(str(e))
         else:
             executor = executors_factory.create(command.get_type())
@@ -40,6 +41,7 @@ class Application(object):
     def _handle_command(data: Dict) -> Command:
         """
         :raises
+            UnknownCommand если получена неизвестная команда
             InvalidFormatCommand если не удалось загрузить команду
         """
 

@@ -45,6 +45,9 @@ class LotManager(object):
         active_lots.extend(await self.create(new_summary, client))
         return active_lots
 
+    async def get_lots_for_sale(self, summary: Summary, client: Tele2Client) -> Summary:
+        return self._controller.get_summary_for_create_lots(summary, [], [], await self._get_sellable_rests(client))
+
     @staticmethod
     async def _get_sellable_rests(client: Tele2Client) -> Summary:
         try:

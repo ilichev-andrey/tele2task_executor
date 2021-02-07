@@ -22,7 +22,7 @@ class TaskManager(object):
         self._lot_manager = lot_manager
         self._lock = asyncio.Lock()
 
-    async def add_task(self, task: containers.Task):
+    async def add_task(self, task: containers.Task) -> containers.Summary:
         phone_number = task.phone_number
         if self._clients.has(phone_number):
             # В новой задаче получены новые данные авторизации клиента, поэтому пересоздаем объект Tele2Client
@@ -32,9 +32,11 @@ class TaskManager(object):
         if self._tasks.has(phone_number):
             task = self._merge_tasks(self._tasks.get(phone_number), task)
 
+        client = await self._create_tele2client(phone_number, task.access_token)
         async with self._lock:
-            self._clients.add(await self._create_tele2client(phone_number, task.access_token))
+            self._clients.add(client)
             self._tasks.add(task)
+            return await self._lot_manager.get_lots_for_sale(task.need_to_sell, client)
 
     async def abort_task(self, phone_number: str):
         async with self._lock:

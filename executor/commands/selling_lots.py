@@ -6,22 +6,25 @@ from enums import CommandType
 
 
 class SellingLotsCommand(Command):
+    phone_number = str
     access_token = AccessToken
     summary = Summary
 
     def __init__(self):
         super().__init__()
+        self.phone_number = ''
         self.access_token = AccessToken()
         self.summary = Summary()
 
     def __str__(self):
-        return f'SellingLotsCommand(id={self.id}, access_token={str(self.access_token)}, summary={str(self.summary)})'
+        return f'SellingLotsCommand(id={self.id}, phone_number={self.phone_number}, ' \
+               'access_token={str(self.access_token)}, summary={str(self.summary)})'
 
     def get_type(self) -> CommandType:
         return CommandType.SELLING_LOTS
 
     def load_from_dict(self, data: Dict) -> bool:
-        if not super()._has_keys_in_dict(data, ('access_token', 'summary')):
+        if not super()._has_keys_in_dict(data, ('phone_number', 'access_token', 'summary')):
             return False
 
         access_token = AccessToken()
@@ -35,12 +38,14 @@ class SellingLotsCommand(Command):
         if not super().load_from_dict(data):
             return False
 
+        self.phone_number = data['phone_number']
         self.access_token = access_token
         self.summary = summary
         return True
 
     def to_dict(self) -> Dict:
         data = super().to_dict()
+        data['phone_number'] = self.phone_number
         data['access_token'] = self.access_token.to_dict()
         data['summary'] = self.summary.to_dict()
         return data

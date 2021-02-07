@@ -14,10 +14,12 @@ class Provider(unittest.TestCase):
         failed_result = {
             'func_result': False,
             'id': default.id,
+            'phone_number': default.phone_number,
             'access_token': default.access_token,
             'summary': default.summary
         }
 
+        phone_number = '8800300600'
         access_token_data = {
             'token': 'token',
             'expired_dt': 1
@@ -34,41 +36,48 @@ class Provider(unittest.TestCase):
             return obj
 
         cases = [
+            # Нет параметра phone_number
+            {
+                'data': {'access_token': access_token_data, 'summary': summary_data},
+                'expected': failed_result
+            },
             # Нет параметра access_token
             {
-                'data': {'summary': summary_data},
+                'data': {'phone_number': phone_number, 'summary': summary_data},
                 'expected': failed_result
             },
             # Нет параметра summary
             {
-                'data': {'access_token': access_token_data},
+                'data': {'phone_number': phone_number, 'access_token': access_token_data},
                 'expected': failed_result
             },
             # Не удалось загрузить AccessToken
             {
-                'data': {'access_token': {'invalid_data'}, 'summary': summary_data},
+                'data': {'phone_number': phone_number, 'access_token': {'invalid_data'}, 'summary': summary_data},
                 'expected': failed_result
             },
             # Не удалось загрузить Summary
             {
-                'data': {'access_token': access_token_data, 'summary': {'invalid_data'}},
+                'data': {'phone_number': phone_number, 'access_token': access_token_data, 'summary': {'invalid_data'}},
                 'expected': failed_result
             },
             # Не удалось загрузить Command (нет параметра id)
             {
-                'data': {'access_token': access_token_data, 'summary': summary_data},
+                'data': {'phone_number': phone_number, 'access_token': access_token_data, 'summary': summary_data},
                 'expected': failed_result
             },
             # Успешная загрузка данных
             {
                 'data': {
                     'id': 'command_id',
+                    'phone_number': phone_number,
                     'access_token': access_token_data,
                     'summary': summary_data
                 },
                 'expected': {
                     'func_result': True,
                     'id': 'command_id',
+                    'phone_number': phone_number,
                     'access_token': load(AccessToken(), access_token_data),
                     'summary': load(Summary(), summary_data)
                 }
@@ -93,6 +102,7 @@ class TestSellingLotsCommand(unittest.TestCase):
     def test_to_dict(self):
         expected = {
             'id': 'command_id',
+            'phone_number': '88003000600',
             'access_token': {
                 'token': 'token',
                 'expired_dt': 1
@@ -106,6 +116,7 @@ class TestSellingLotsCommand(unittest.TestCase):
 
         command = SellingLotsCommand()
         command.id = 'command_id'
+        command.phone_number = '88003000600'
         command.access_token.token = 'token'
         command.access_token.expired_dt = datetime.fromtimestamp(1)
         command.summary = Summary(gigabytes=1, minutes=2, sms=3)

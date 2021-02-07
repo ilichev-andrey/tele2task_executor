@@ -8,8 +8,8 @@ from interfaces import Serializable
 class Command(Serializable):
     id = str
 
-    def __init__(self):
-        self.id = ''
+    def __init__(self, command_id=''):
+        self.id = command_id
 
     def __str__(self):
         return f'Command(id={self.id})'
@@ -26,4 +26,4 @@ class Command(Serializable):
         return True
 
     def to_dict(self) -> Dict:
-        return {'id': self.id}
+        return {'id': self.id, 'type': self.get_type().value}

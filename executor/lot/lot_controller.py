@@ -25,7 +25,7 @@ class LotController(object):
             ))
 
         minutes_price = self._prices_config.minutes
-        lot_count = summary.minutes  # minutes_price.count
+        lot_count = summary.minutes // minutes_price.count
         for i in range(lot_count):
             lots.append(Lot(
                 type=LotType.VOICE,
@@ -34,7 +34,7 @@ class LotController(object):
             ))
 
         sms_price = self._prices_config.minutes
-        lot_count = summary.sms  # sms_price.count
+        lot_count = summary.sms // sms_price.count
         for i in range(lot_count):
             lots.append(Lot(
                 type=LotType.SMS,
@@ -91,7 +91,7 @@ class LotController(object):
     @staticmethod
     def _normalize_summary(summary: Summary, rests_summary: Summary) -> Summary:
         new_summary = Summary()
-        new_summary.gigabyte_count = min(summary.gigabytes, rests_summary.gigabytes)
-        new_summary.minute_count = min(summary.minutes, rests_summary.minutes)
-        new_summary.sms_count = min(summary.sms, rests_summary.sms)
+        new_summary.gigabytes = min(summary.gigabytes, rests_summary.gigabytes)
+        new_summary.minutes = min(summary.minutes, rests_summary.minutes)
+        new_summary.sms = min(summary.sms, rests_summary.sms)
         return new_summary

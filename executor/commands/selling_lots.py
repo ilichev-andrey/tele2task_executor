@@ -10,15 +10,15 @@ class SellingLotsCommand(Command):
     access_token = AccessToken
     summary = Summary
 
-    def __init__(self):
-        super().__init__()
-        self.phone_number = ''
-        self.access_token = AccessToken()
-        self.summary = Summary()
+    def __init__(self, command_id='', phone_number='', access_token=AccessToken(), summary=Summary()):
+        super().__init__(command_id=command_id)
+        self.phone_number = phone_number
+        self.access_token = access_token
+        self.summary = summary
 
     def __str__(self):
         return f'SellingLotsCommand(id={self.id}, phone_number={self.phone_number}, ' \
-               'access_token={str(self.access_token)}, summary={str(self.summary)})'
+               f'access_token={str(self.access_token)}, summary={str(self.summary)})'
 
     def get_type(self) -> CommandType:
         return CommandType.SELLING_LOTS

@@ -22,8 +22,8 @@ def main():
 
     try:
         config = configs.load_config(config)
-    except KeyError:
-        sys.stderr.write(f'Parameters are missing in the file, see "default_config.json"')
+    except KeyError as e:
+        sys.stderr.write(f'Parameter {str(e)} is missing in the file, see "default_config.json"')
         exit(1)
 
     logger.create(config.log_file, logging.INFO)

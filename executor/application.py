@@ -10,6 +10,7 @@ from command_executors import executors_factory
 from commands import commands_factory
 from commands.command import Command
 from configs import Config
+from enums import CommandType
 from lot.lot_manager import LotManager
 from net import Client
 from task.task_manager import TaskManager
@@ -21,6 +22,7 @@ class Application(object):
     _lot_manager = LotManager
 
     def __init__(self, config: Config):
+        self._config = config
         self._lot_manager = LotManager(config.lot)
         self._task_manager = TaskManager(config.task, self._lot_manager)
 
@@ -32,12 +34,11 @@ class Application(object):
 
     async def _run_server(self):
         server_config = self._config.server
-        server = net.start_server(handler=self._handle_data, host=server_config.host, port=server_config.port)
+        server = await net.start_server(handler=self._handle_data, host=server_config.host, port=server_config.port)
         await server.run()
 
     async def _handle_data(self, client: Client):
         data = await self._read_data(client)
-        LoggerWrap().get_logger().info(f'Получены данные команды: {data}')
         await self._execute_command(data, client)
 
     @staticmethod
@@ -73,7 +74,7 @@ class Application(object):
         if 'type' not in data:
             raise exceptions.InvalidFormatCommand(f'Не найден параметр "type" в данных: {data}')
 
-        command = commands_factory.create(data['type'])
+        command = commands_factory.create(CommandType(data['type']))
         if not command.load_from_dict(data):
             raise exceptions.InvalidFormatCommand(f'Не удалось загрузить команду, данные: {data}')
 

@@ -33,15 +33,18 @@ class Server(object):
             await self._server.serve_forever()
 
 
-def open_connection(host: str, port: int) -> Client:
+async def open_connection(host: str, port: int) -> Client:
     reader, writer = await asyncio.open_connection(host=host, port=port)
     return Client(reader, writer)
 
 
-def start_server(handler: Callable[[], Coroutine[Any, Any, None]], host: str, port: int) -> Server:
+async def start_server(handler: Callable[[Client], Coroutine[Any, Any, None]], host: str, port: int) -> Server:
     """Запустить сокет сервер и общаться с подключенными клиентамию
 
     Первый параметр, `handler`, принимает параметр: client. client - это объект Client из данного модуля.
     Этот параметр должен быть сопрограммой.
     """
-    return Server(await asyncio.start_server(handler, host=host, port=port))
+    async def client_connected_cb(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        await handler(Client(reader=reader, writer=writer))
+
+    return Server(await asyncio.start_server(client_connected_cb, host=host, port=port))

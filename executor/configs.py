@@ -42,7 +42,7 @@ def load_config(data: Dict) -> Config:
     """
 
     lot_data = data['lot']
-    prices_data = data['prices']
+    prices_data = lot_data['prices']
     server_data = data['server']
     return Config(
         log_file=data['log_file'],

@@ -1,5 +1,5 @@
 {
-  "log_file": "/path/to/logs",
+  "log_file": "/path/to/executor.log",
   "task": {
     "execution_interval_seconds": 30
   },

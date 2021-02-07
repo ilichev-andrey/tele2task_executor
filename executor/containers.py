@@ -82,7 +82,7 @@ class AccessToken(Serializable):
         return self.token == other.token and self.expired_dt == other.expired_dt
 
     def __str__(self):
-        return f'AccessToken(token={self.token}, expired_dt={str(self.expired_dt)})'
+        return f'AccessToken(token={self.token[:10]}..., expired_dt={str(self.expired_dt)})'
 
     def load_from_dict(self, data: Dict) -> bool:
         if not super()._has_keys_in_dict(data, ('token', 'expired_dt')):

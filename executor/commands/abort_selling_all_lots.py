@@ -7,9 +7,9 @@ from enums import CommandType
 class AbortSellingAllLotsCommand(Command):
     phone_number = str
 
-    def __init__(self):
-        super().__init__()
-        self.phone_number = ''
+    def __init__(self, command_id='', phone_number=''):
+        super().__init__(command_id=command_id)
+        self.phone_number = phone_number
 
     def __str__(self):
         return f'AbortSellingAllLotsCommand(id={self.id}, phone_number={self.phone_number})'

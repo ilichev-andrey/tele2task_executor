@@ -23,10 +23,16 @@ class TaskConfig(NamedTuple):
     execution_interval_seconds: int
 
 
+class ServerConfig(NamedTuple):
+    host: str
+    port: int
+
+
 class Config(NamedTuple):
     log_file: str
     task: TaskConfig
     lot: LotConfig
+    server: ServerConfig
 
 
 def load_config(data: Dict) -> Config:
@@ -37,6 +43,7 @@ def load_config(data: Dict) -> Config:
 
     lot_data = data['lot']
     prices_data = data['prices']
+    server_data = data['server']
     return Config(
         log_file=data['log_file'],
         task=TaskConfig(execution_interval_seconds=data['task']['execution_interval_seconds']),
@@ -49,5 +56,6 @@ def load_config(data: Dict) -> Config:
                 minutes=Price(count=prices_data['minutes']['count'], cost=prices_data['minutes']['cost']),
                 sms=Price(count=prices_data['sms']['count'], cost=prices_data['sms']['cost'])
             )
-        )
+        ),
+        server=ServerConfig(host=server_data['host'], port=server_data['port'])
     )

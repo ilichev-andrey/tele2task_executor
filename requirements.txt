@@ -1,2 +1,3 @@
 ddt==1.4.1
 tele2client==1.0.1
+asyncio==3.4.3

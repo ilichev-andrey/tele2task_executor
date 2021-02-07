@@ -2,6 +2,7 @@
 **/__pycache__
 venv
 logs
+tests/manual_tests
 tmp
 
 config.json

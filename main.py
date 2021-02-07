@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 
+import asyncio
 from tele2client.wrappers import logger
 
 import configs
@@ -28,7 +29,7 @@ def main():
     logger.create(config.log_file, logging.INFO)
 
     application = Application(config)
-    application.run()
+    asyncio.run(application.run())
 
 
 if __name__ == '__main__':
